@@ -12,10 +12,12 @@ datasource db {
 }
 
 model User {
-  user_id       Int    @id @default(autoincrement())
-  user_username String @unique
+  user_id       Int      @id @default(autoincrement())
+  user_username String   @unique
   user_password String
   user_role     Role
+  Student       Student?
+  Admin         Admin?
 }
 
 enum Role {
@@ -29,6 +31,8 @@ model Student {
   student_email           String @unique
   student_description     String
   student_profile_picture String
+  student_user            User   @relation(fields: [student_user_id], onDelete: Cascade, references: [user_id])
+  student_user_id         Int    @unique
 }
 
 model Admin {
@@ -37,6 +41,8 @@ model Admin {
   admin_email           String @unique
   admin_description     String
   admin_profile_picture String
+  admin_user            User   @relation(fields: [admin_user_id], onDelete: Cascade, references: [user_id])
+  admin_user_id         Int    @unique
 }
 
 model School {
@@ -49,6 +55,7 @@ model Course {
   course_id          Int    @id @default(autoincrement())
   course_title       String
   course_description String
+  course_short_name  String
   Unit               Unit[]
 }
 
