@@ -65,7 +65,7 @@ export default function Button({
       onClick={onClick}
       type={type}
       disabled={disabled}
-      className="mt-2 disabled:bg-opacity-70  py-3 px-3 inline-flex items-center justify-center gap-x-2 w-full rounded-lg  bg-gradient-to-tr from-amber-600 to-amber-500 shadow text-white text-sm font-medium focus:ring-1 focus:border ring-amber-400 border-amber-300"
+      className="mt-2 disabled:bg-opacity-70  py-3 px-3 inline-flex items-center justify-center gap-x-2 w-full rounded-md  bg-gradient-to-tr from-green-600 to-green-500  text-white text-sm font-medium focus:ring-1 focus:border ring-green-400 border-green-300"
     >
       {svg}
       {loading ? <p className="italic">loading... </p> : text}
