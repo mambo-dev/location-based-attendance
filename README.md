@@ -1,4 +1,4 @@
-## project desxription
+## project description
 
 This project is a shool attendance tracking web app that allows user to sign for their classes only in our geo fenced area
 

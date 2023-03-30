@@ -10,3 +10,81 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  user_id       Int    @id @default(autoincrement())
+  user_username String @unique
+  user_password String
+  user_role     Role
+}
+
+enum Role {
+  student
+  admin
+}
+
+model Student {
+  student_id              Int    @id @default(autoincrement())
+  student_full_name       String
+  student_email           String @unique
+  student_description     String
+  student_profile_picture String
+}
+
+model Admin {
+  admin_id              Int    @id @default(autoincrement())
+  admin_full_name       String
+  admin_email           String @unique
+  admin_description     String
+  admin_profile_picture String
+}
+
+model School {
+  school_id  Int    @id @default(autoincrement())
+  school_lng String
+  school_lat String
+}
+
+model Course {
+  course_id          Int    @id @default(autoincrement())
+  course_title       String
+  course_description String
+  Unit               Unit[]
+}
+
+model Unit {
+  unit_id          Int     @id @default(autoincrement())
+  unit_title       String
+  unit_code        String
+  unit_description String
+  unit_course      Course  @relation(fields: [unit_course_id], onDelete: Cascade, references: [course_id])
+  unit_course_id   Int
+  Class            Class[]
+}
+
+model Class {
+  class_id           Int          @id @default(autoincrement())
+  class_course       Unit         @relation(fields: [class_course_id], onDelete: Cascade, references: [unit_id])
+  class_course_id    Int
+  class_name         String
+  class_description  String
+  class_start_time   DateTime
+  class_end_time     DateTime
+  class_type         ClassType
+  class_location_lat String?
+  class_location_lng String?
+  Attendance         Attendance[]
+}
+
+enum ClassType {
+  expired
+  ongoing
+  upcoming
+}
+
+model Attendance {
+  attendane_id        Int     @id @default(autoincrement())
+  attendane_class     Class   @relation(fields: [attendance_class_id], onDelete: Cascade, references: [class_id])
+  attendance_class_id Int
+  attendance_status   Boolean
+}
