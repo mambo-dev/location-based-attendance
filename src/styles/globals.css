@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer{
-  body{
-    @apply bg-slate-50
+
+@layer {
+  body {
+      @apply bg-slate-50
   }
 }
