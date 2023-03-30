@@ -11,8 +11,8 @@ export default function MenuOptions({ profileLink, navLinks }: any) {
     <div className="   text-right">
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="inline-flex w-14 h-14 justify-center rounded-full">
-            <span className="relative w-14 h-14 rounded-full bg-white  border border-slate-300">
+          <Menu.Button className="inline-flex w-16 h-16 justify-center rounded-full">
+            <span className="relative w-16 h-16 rounded-full bg-white  border border-slate-300">
               <Image
                 src={
                   imageUrl && imageUrl?.length > 0
@@ -22,7 +22,7 @@ export default function MenuOptions({ profileLink, navLinks }: any) {
                 alt="profile image"
                 fill
                 sizes=""
-                className="rounded-full w-full h-full "
+                className="rounded-full w-full h-full object-cover"
               />
             </span>
           </Menu.Button>
@@ -36,7 +36,7 @@ export default function MenuOptions({ profileLink, navLinks }: any) {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute z-10 right-0 top-full mt-1 w-56 origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="px-1 py-1 ">
               <Menu.Item>
                 {({ active }) => (
@@ -44,7 +44,7 @@ export default function MenuOptions({ profileLink, navLinks }: any) {
                     <button
                       className={`${
                         active
-                          ? "bg-gradient-to-tr from-amber-500 to-amber-600 text-white"
+                          ? "bg-gradient-to-tr from-green-500 to-green-600 text-white"
                           : "text-gray-900"
                       } group flex w-full items-center rounded px-2 py-2 text-sm`}
                     >
@@ -53,7 +53,7 @@ export default function MenuOptions({ profileLink, navLinks }: any) {
                   </Link>
                 )}
               </Menu.Item>
-              <div className="flex  flex-col">
+              <div className=" flex md:hidden flex-col">
                 {navLinks?.map((link: any, index: number) => {
                   return (
                     <Menu.Item key={index}>
@@ -62,7 +62,7 @@ export default function MenuOptions({ profileLink, navLinks }: any) {
                           <button
                             className={`${
                               active
-                                ? "bg-gradient-to-tr from-amber-500 to-amber-600 text-white"
+                                ? "bg-gradient-to-tr from-green-500 to-green-600 text-white"
                                 : "text-gray-900"
                             } group flex w-full items-center rounded px-2 py-2 text-sm`}
                           >
@@ -80,7 +80,7 @@ export default function MenuOptions({ profileLink, navLinks }: any) {
                     onClick={logout}
                     className={`${
                       active
-                        ? "bg-gradient-to-tr from-amber-500 to-amber-600 text-white"
+                        ? "bg-gradient-to-tr from-red-500 to-red-600 text-white"
                         : "text-gray-900"
                     } group flex w-full items-center rounded px-2 py-2 text-sm`}
                   >

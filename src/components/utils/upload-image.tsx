@@ -15,7 +15,7 @@ export default function UploadImage({
   return (
     <>
       <span className=" font-semibold"> {label} </span>
-      <div className="flex flex-col w-48 h-48 mx-auto mb-2">
+      <div className="flex flex-col w-48 h-48 rounded-full mx-auto mb-2">
         {previewUrl ? (
           <div className="mx-auto w-full h-full relative mt-1">
             <Image
@@ -24,16 +24,16 @@ export default function UploadImage({
               sizes=""
               width={400}
               height={200}
-              className="rounded-lg h-full w-full "
+              className="rounded-full object-cover  h-full w-full "
             />
           </div>
         ) : (
-          <label className="flex rounded-lg border border-slate-300 border-dashed  items-center justify-center flex-grow h-full w-full py-3 transition-colors duration-150 cursor-pointer hover:text-gray-600">
+          <label className="flex rounded-full border border-slate-300 border-dashed  items-center justify-center flex-grow h-full w-full py-3 transition-colors duration-150 cursor-pointer hover:text-gray-600">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              className="w-10 h-10 text-emerald-400"
+              className="w-10 h-10 text-green-400"
               strokeWidth={2}
               stroke="currentColor"
             >

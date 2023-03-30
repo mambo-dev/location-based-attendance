@@ -21,5 +21,5 @@ export const useAuth = () => {
     setImageUrl(Cookies.get("profile"));
   }, []);
 
-  return { logout, imageUrl };
+  return { logout, imageUrl, setImageUrl };
 };

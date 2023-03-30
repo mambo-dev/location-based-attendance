@@ -14,7 +14,7 @@ export default function TextArea({ onChange, value, name, label }: Props) {
         value={value}
         onChange={onChange}
         name={name}
-        className="py-3 px-2 rounded-lg outline-none bg-slate-50 border  border-slate-300 focus:border-amber-600 focus:ring-2 focus:ring-amber-300 ring-offset-1 hover:border-amber-500 "
+        className="py-2 px-2 rounded-lg outline-none bg-slate-50 border  border-slate-300 focus:border-green-600 focus:ring-2 focus:ring-green-300 ring-offset-1 hover:border-green-500 "
       />
     </div>
   );
