@@ -7,6 +7,8 @@ type Props = {
   label: string;
   type?: string;
   colSpan?: string;
+  disabled?: boolean;
+  placeholder?: string;
 };
 
 export default function Input({
@@ -16,6 +18,8 @@ export default function Input({
   label,
   type,
   colSpan,
+  disabled,
+  placeholder,
 }: Props) {
   return (
     <div
@@ -27,7 +31,9 @@ export default function Input({
         onChange={onChange}
         name={name}
         type={type}
-        className="py-2 px-2 rounded-md outline-none bg-slate-50/50 border  border-slate-300 focus:border-green-600 focus:ring-2 focus:ring-green-300 ring-offset-1 hover:border-green-500 "
+        disabled={disabled}
+        placeholder={placeholder}
+        className="py-2 px-2 rounded-md outline-none disabled:bg-slate-100 bg-slate-50/50 border  border-slate-300 focus:border-green-600 focus:ring-2 focus:ring-green-300 ring-offset-1 hover:border-green-500 "
       />
     </div>
   );

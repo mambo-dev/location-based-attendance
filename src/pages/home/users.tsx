@@ -5,7 +5,7 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { Admin, Role, Student, User } from "@prisma/client";
+import { Admin, Course, Role, Student, User } from "@prisma/client";
 
 import jwtDecode from "jwt-decode";
 import { GetServerSideProps } from "next";
@@ -20,21 +20,25 @@ import CreateProfile from "../../components/users/create";
 import Button from "../../components/utils/button";
 import Modal from "../../components/utils/Modal";
 import Table from "../../components/utils/table";
+import SidePanel from "../../components/utils/sidepanel";
+import UpdateProfile from "../../components/users/update";
 
 type Props = {
   data: Data;
 };
 
 export default function Users({ data }: Props) {
-  const { token, user, users } = data;
-  const [selectedUser, setSelectedUser] = useState<LoggedInUser>(null);
-  const [openEditModal, setOpenEditModal] = useState(false);
+  const { token, user, users, courses } = data;
+  const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
+  const [openCreateSidePanel, setOpenCreateSidePanel] = useState(false);
+  const [openEditSidePanel, setOpenEditSidePanel] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const headers = [
     "profile image",
     "reg no",
     "full name",
     "email",
+    "course",
     "role",
     "more",
   ];
@@ -49,7 +53,7 @@ export default function Users({ data }: Props) {
         <div className="w-full flex items-center mb-2 justify-end">
           <div className="w-fit">
             <Button
-              onClick={() => setOpenEditModal(true)}
+              onClick={() => setOpenCreateSidePanel(true)}
               text="add user"
               svg={<PlusIcon className="w-5 h-5" />}
             />
@@ -78,7 +82,7 @@ export default function Users({ data }: Props) {
                   />
                 </div>
               </th>
-              <td className="py-4 px-1">{user.user_reg_no}</td>
+              <td className="py-4 px-1">{user.user_reg_no.split("-")[0]}</td>
               <td className="py-4 px-1">
                 {user.user_role === "admin"
                   ? `${user.Admin?.admin_full_name}`
@@ -88,6 +92,11 @@ export default function Users({ data }: Props) {
                 {user.user_role === "admin"
                   ? `${user.Admin?.admin_email}`
                   : `${user.Student?.student_email}`}
+              </td>
+              <td className="py-4 px-1">
+                {user.user_role === "admin"
+                  ? `n/a`
+                  : `${user.Student?.student_course.course_title}`}
               </td>
               <td className="py-4 px-1">{user.user_role}</td>
               <td className="py-4 px-1 ">
@@ -103,6 +112,7 @@ export default function Users({ data }: Props) {
                       <Menu.Item>
                         {({ active }) => (
                           <button
+                            onClick={() => setOpenEditSidePanel(true)}
                             className={`${
                               active
                                 ? "bg-gradient-to-tr from-blue-500 to-blue-600 text-white"
@@ -137,13 +147,24 @@ export default function Users({ data }: Props) {
           );
         })}
       </Table>
-      <Modal
+      <SidePanel
         span="max-w-xl"
-        setIsOpen={setOpenDeleteModal}
-        isOpen={openEditModal}
+        setOpen={setOpenCreateSidePanel}
+        open={openCreateSidePanel}
       >
-        <CreateProfile token={token} />
-      </Modal>
+        <CreateProfile token={token} courses={courses} />
+      </SidePanel>
+      <SidePanel
+        span="max-w-xl"
+        setOpen={setOpenEditSidePanel}
+        open={openEditSidePanel}
+      >
+        <UpdateProfile
+          token={token}
+          courses={courses}
+          selectedUser={selectedUser}
+        />
+      </SidePanel>
     </div>
   );
 }
@@ -151,14 +172,27 @@ export default function Users({ data }: Props) {
 type Data = {
   token: string;
   user: LoggedInUser;
-  users:
-    | (User & {
-        Admin: Admin | null;
-        Student: Student | null;
-      })[];
+  users: (User & {
+    Admin: Admin | null;
+    Student:
+      | (Student & {
+          student_course: Course;
+        })
+      | null;
+  })[];
+  courses: Course[];
 };
 
-type LoggedInUser = {
+export type SelectedUser = User & {
+  Admin: Admin | null;
+  Student:
+    | (Student & {
+        student_course: Course;
+      })
+    | null;
+};
+
+export type LoggedInUser = {
   Admin: Admin | null;
   Student: Student | null;
   user_id: number;
@@ -210,9 +244,15 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   const users = await prisma.user.findMany({
     include: {
       Admin: true,
-      Student: true,
+      Student: {
+        include: {
+          student_course: true,
+        },
+      },
     },
   });
+
+  const courses = await prisma.course.findMany({});
 
   return {
     props: {
@@ -220,6 +260,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
         token: access_token,
         user: loggedInUser,
         users,
+        courses,
       },
     },
   };
