@@ -10,6 +10,7 @@ import { useAuth } from "../../components/hooks/auth";
 import Layout from "../../components/layout/layout";
 import MenuOptions from "../../components/utils/menu";
 import { LoggedInUser } from "./users";
+import Head from "next/head";
 
 type Props = {
   data: Data;
@@ -30,7 +31,17 @@ export default function Home({ data }: Props) {
       )
     );
   });
-  return <div className="w-full h-full"></div>;
+  return (
+    <>
+      <Head>
+        <title>attendance tracker | home</title>
+        <meta name="description" content="take attendance the right way" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/images/logo.svg" />
+      </Head>
+      <div className="w-full h-full"></div>;
+    </>
+  );
 }
 
 type Data = {

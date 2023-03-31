@@ -9,6 +9,7 @@ import { DecodedToken } from "../../backend-utils/types";
 import { useAuth } from "../../components/hooks/auth";
 import Layout from "../../components/layout/layout";
 import MenuOptions from "../../components/utils/menu";
+import Head from "next/head";
 
 type Props = {
   data: Data;
@@ -16,9 +17,18 @@ type Props = {
 
 export default function Class({ data }: Props) {
   const { token, user } = data;
-  const { setImageUrl } = useAuth();
 
-  return <div className="w-full h-full"></div>;
+  return (
+    <>
+      <Head>
+        <title>attendance tracker | home</title>
+        <meta name="description" content="take attendance the right way" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/images/logo.svg" />
+      </Head>
+      <div className="w-full h-full"></div>;
+    </>
+  );
 }
 
 type Data = {
