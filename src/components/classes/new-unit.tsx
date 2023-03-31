@@ -46,6 +46,7 @@ export default function NewUnit({ token, courses }: Props) {
     title: "",
     code: "",
     description: "",
+    total_classes: 0,
   };
   const handleNewUnit = async () => {
     setLoading(true);
@@ -116,13 +117,20 @@ export default function NewUnit({ token, courses }: Props) {
           label="title"
           name="title"
           value={values.title}
-          colSpan="col-span-3"
+          colSpan="col-span-2"
           onChange={handleChange}
         />
         <Input
           label="code"
           name="code"
           value={values.code}
+          onChange={handleChange}
+        />
+        <Input
+          label="total classes"
+          name="total_classes"
+          type="number"
+          value={values.total_classes}
           onChange={handleChange}
         />
       </div>
