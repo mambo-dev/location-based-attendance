@@ -31,8 +31,6 @@ export default function UpdateProfile({ token, courses, selectedUser }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const [openQuery, setOpenQuery] = useState(false);
-
   const router = useRouter();
   function handleFileUploadChange(e: React.ChangeEvent<HTMLInputElement>) {
     console.log("on upload change", e);
@@ -131,14 +129,14 @@ export default function UpdateProfile({ token, courses, selectedUser }: Props) {
       );
 
       const {
-        created,
+        updated,
         errors: profileErrors,
       }: {
-        created: any | null;
+        updated: any | null;
         errors: HandleError[] | [];
       } = await createProfile.data;
 
-      if (profileErrors.length > 0 || !created) {
+      if (profileErrors.length > 0 || !updated) {
         setLoading(false);
 
         setErrors([...profileErrors]);
@@ -262,10 +260,10 @@ export default function UpdateProfile({ token, courses, selectedUser }: Props) {
         </div>
       </div>
       <div className="w-32 ml-auto ">
-        <Button text="save user" type="submit" loading={loading} />
+        <Button text="update" type="submit" loading={loading} />
       </div>
       <ErrorMessage errors={errors} />
-      <Success message="succesfully created user" success={success} />
+      <Success message="succesfully updated user" success={success} />
     </form>
   );
 }

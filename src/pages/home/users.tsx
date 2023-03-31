@@ -22,6 +22,7 @@ import Modal from "../../components/utils/Modal";
 import Table from "../../components/utils/table";
 import SidePanel from "../../components/utils/sidepanel";
 import UpdateProfile from "../../components/users/update";
+import DeleteUser from "../../components/users/delete";
 
 type Props = {
   data: Data;
@@ -32,6 +33,7 @@ export default function Users({ data }: Props) {
   const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
   const [openCreateSidePanel, setOpenCreateSidePanel] = useState(false);
   const [openEditSidePanel, setOpenEditSidePanel] = useState(false);
+
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const headers = [
     "profile image",
@@ -109,25 +111,28 @@ export default function Users({ data }: Props) {
                   </Menu.Button>
                   <Menu.Items className="absolute z-40 right-full mr-2 mb-2 -top-full mt-1 w-56 origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="px-1 py-1 ">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <button
-                            onClick={() => setOpenEditSidePanel(true)}
-                            className={`${
-                              active
-                                ? "bg-gradient-to-tr from-blue-500 to-blue-600 text-white"
-                                : "text-gray-900"
-                            } group inline-flex w-full items-center justify-start gap-x-2 rounded px-2 py-2 text-sm`}
-                          >
-                            <PencilIcon className="w-4 h-4" /> edit
-                          </button>
-                        )}
-                      </Menu.Item>
+                      {(isAdmin || isUsersProfile) && (
+                        <Menu.Item>
+                          {({ active }) => (
+                            <button
+                              onClick={() => setOpenEditSidePanel(true)}
+                              className={`${
+                                active
+                                  ? "bg-gradient-to-tr from-blue-500 to-blue-600 text-white"
+                                  : "text-gray-900"
+                              } group inline-flex w-full items-center justify-start gap-x-2 rounded px-2 py-2 text-sm`}
+                            >
+                              <PencilIcon className="w-4 h-4" /> edit
+                            </button>
+                          )}
+                        </Menu.Item>
+                      )}
 
                       {isAdmin && (
                         <Menu.Item>
                           {({ active }) => (
                             <button
+                              onClick={() => setOpenDeleteModal(true)}
                               className={`${
                                 active
                                   ? "bg-gradient-to-tr from-red-500 to-red-600 text-white"
@@ -165,6 +170,13 @@ export default function Users({ data }: Props) {
           selectedUser={selectedUser}
         />
       </SidePanel>
+      <Modal isOpen={openDeleteModal} setIsOpen={setOpenDeleteModal}>
+        <DeleteUser
+          selectedUser={selectedUser}
+          setIsOpen={setOpenDeleteModal}
+          token={token}
+        />
+      </Modal>
     </div>
   );
 }

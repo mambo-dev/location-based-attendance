@@ -124,7 +124,7 @@ export default function CreateProfile({ token, courses }: Props) {
       }
 
       const createProfile = await axios.post(
-        `/api/users/create-user`,
+        `/api/users/create`,
         {
           ...values,
           profilePicture: signedUrl?.signedUrl,

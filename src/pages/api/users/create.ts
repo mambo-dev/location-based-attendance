@@ -19,7 +19,7 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   try {
-    if (req.method !== "PUT") {
+    if (req.method !== "POST") {
       return res.status(403).json({
         created: false,
         errors: [
@@ -41,7 +41,6 @@ export default async function handler(
       });
     }
 
-    const { user_id } = req.query;
     const token = req.headers.authorization?.split(" ")[1];
 
     const decodedToken: DecodedToken = await jwtDecode(`${token}`);
@@ -51,20 +50,16 @@ export default async function handler(
         user_id: decodedToken.user_id,
       },
     });
-    const isAdmin = user?.user_role === "admin";
 
-    if (!isAdmin) {
-      const isUsersProfile = user?.user_id === Number(user_id);
-      if (!isUsersProfile) {
-        return res.status(401).json({
-          created: null,
-          errors: [
-            {
-              message: "cannot update this profile",
-            },
-          ],
-        });
-      }
+    if (user?.user_role !== "admin") {
+      return res.status(401).json({
+        created: null,
+        errors: [
+          {
+            message: "only admins can create a user",
+          },
+        ],
+      });
     }
 
     const noEmptyValues = handleBodyNotEmpty(req.body);
@@ -82,22 +77,48 @@ export default async function handler(
       firstName,
       secondName,
       lastName,
+      courseId,
+
       email,
       profilePicture,
     } = req.body;
 
-    const userExists = await prisma.user.findUnique({
+    const findCourse = await prisma.course.findUnique({
       where: {
-        user_id: Number(user_id),
+        course_id: Number(courseId),
       },
     });
 
-    if (!userExists) {
+    if (!findCourse) {
       return res.status(200).json({
         created: false,
         errors: [
           {
-            message: `could not find user to update`,
+            message: `error finding course requested`,
+          },
+        ],
+      });
+    }
+
+    const user_reg_no =
+      role === "student"
+        ? `${findCourse.course_short_name.toLowerCase()}${firstName.toLowerCase()}${getYear(
+            new Date()
+          )}-${uuidv4()}`
+        : `${firstName}Admin${uuidv4()}`.toLowerCase();
+
+    const usernameExists = await prisma.user.findUnique({
+      where: {
+        user_reg_no: user_reg_no,
+      },
+    });
+
+    if (usernameExists) {
+      return res.status(200).json({
+        created: false,
+        errors: [
+          {
+            message: `already have an account under this number`,
           },
         ],
       });
@@ -107,32 +128,32 @@ export default async function handler(
       hashLength: 10,
     });
 
-    if (userExists.user_role === "student") {
-      await prisma.user.update({
-        where: {
-          user_id: userExists.user_id,
-        },
+    if (role === "student") {
+      await prisma.user.create({
         data: {
           user_password: hash,
-
+          user_reg_no: user_reg_no,
           user_role: role,
           Student: {
-            update: {
+            create: {
               student_full_name: `${firstName} ${secondName} ${lastName}`,
               student_description: description,
               student_email: email,
               student_profile_picture: profilePicture,
+              student_course: {
+                connect: {
+                  course_id: findCourse.course_id,
+                },
+              },
             },
           },
         },
       });
     } else {
-      await prisma.user.update({
-        where: {
-          user_id: userExists.user_id,
-        },
+      await prisma.user.create({
         data: {
           user_password: hash,
+          user_reg_no: user_reg_no,
           user_role: role,
           Admin: {
             create: {
