@@ -49,6 +49,8 @@ export default function Users({ data }: Props) {
 
   const isUsersProfile = user?.user_id === selectedUser?.user_id;
 
+  const loggedInUser = user;
+
   return (
     <div className="w-full h-full py-10 md:px-28">
       {isAdmin && (
@@ -104,8 +106,15 @@ export default function Users({ data }: Props) {
               <td className="py-4 px-1 ">
                 <Menu as="div" className="relative inline-block text-left">
                   <Menu.Button
+                    disabled={
+                      isAdmin
+                        ? false
+                        : user.user_reg_no !== loggedInUser?.user_reg_no
+                        ? true
+                        : false
+                    }
                     onClick={() => setSelectedUser(user)}
-                    className="w-fit py-3 px-3  border border-slate-300 rounded-md "
+                    className="w-fit py-3 px-3 disabled:bg-slate-200 border border-slate-300 rounded-md "
                   >
                     <EllipsisVerticalIcon className="w-6 h-6 font-bold" />
                   </Menu.Button>

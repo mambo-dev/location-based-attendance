@@ -20,6 +20,10 @@ model User {
   Admin         Admin?
 }
 
+model RegNo {
+  reg_no_id Int @id @default(autoincrement())
+}
+
 enum Role {
   student
   admin

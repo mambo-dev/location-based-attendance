@@ -100,12 +100,15 @@ export default async function handler(
       });
     }
 
+    const createRandomNumber = await prisma.regNo.create({});
+    const randomNumber = formatNumber(createRandomNumber.reg_no_id);
+
     const user_reg_no =
       role === "student"
         ? `${findCourse.course_short_name.toLowerCase()}${firstName.toLowerCase()}${getYear(
             new Date()
-          )}-${uuidv4()}`
-        : `${firstName}Admin${uuidv4()}`.toLowerCase();
+          )}${randomNumber}`
+        : `${firstName}Admin${randomNumber}`.toLowerCase();
 
     const usernameExists = await prisma.user.findUnique({
       where: {

@@ -96,10 +96,6 @@ export default async function handler(
       });
     }
 
-    const hash = await argon2.hash(password, {
-      hashLength: 10,
-    });
-
     if (password === "") {
       if (userExists.user_role === "student") {
         await prisma.user.update({
@@ -137,6 +133,12 @@ export default async function handler(
         });
       }
     }
+
+    const hash = await argon2.hash(password, {
+      hashLength: 10,
+    });
+
+    console.log(password);
 
     if (password !== confirmPassword) {
       return res.status(200).json({
