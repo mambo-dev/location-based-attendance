@@ -21,6 +21,7 @@ import Button from "../../components/utils/button";
 import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
 import SidePanel from "../../components/utils/sidepanel";
 import NewUnit from "../../components/classes/new-unit";
+import UnitComp from "../../components/classes/unit";
 
 type Props = {
   data: Data;
@@ -47,8 +48,8 @@ export default function Class({ data }: Props) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/logo.svg" />
       </Head>
-      <div className="w-full h-full py-10 px-4 md:px-24">
-        <div className="w-full md:h-3 grid grid-cols-5 md:grid-cols-10 gap-2">
+      <div className="w-full h-full py-10 px-4 md:px-24 flex flex-col">
+        <div className="w-full  grid grid-cols-5 md:grid-cols-10 gap-2">
           <div className=" relative w-full col-span-4 md:col-span-9 bg-white shadow rounded-md">
             <input
               className="w-full h-full py-2 px-10 rounded-md outline-none disabled:bg-slate-100  border  border-slate-200 focus:border-green-600 focus:ring-2 focus:ring-green-300 ring-offset-1 hover:border-green-500 "
@@ -74,9 +75,13 @@ export default function Class({ data }: Props) {
             </div>
           )}
         </div>
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 "></div>
+        <div className="w-full grid grid-cols-1 md:grid-cols-3 mt-2 gap-4 py-4">
+          {clientUnits.map((unit) => {
+            return <UnitComp key={unit.unit_id} unit={unit} />;
+          })}
+        </div>
       </div>
-      ;
+
       <SidePanel
         span="max-w-2xl"
         open={openCreateSidePanel}
