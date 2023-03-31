@@ -5,7 +5,7 @@ export type HandleError = {
 };
 
 export type DecodedToken = {
-  username: string;
+  user_reg_no: string;
   user_id: number;
   iat: number;
   exp: number;

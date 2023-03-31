@@ -16,7 +16,7 @@ export default function Home() {
   const [errors, setErrors] = useState<HandleError[]>([]);
   const [success, setSuccess] = useState(false);
   const initialState = {
-    username: "",
+    user_reg_no: "",
     password: "",
   };
 
@@ -103,10 +103,10 @@ export default function Home() {
             className="w-full gap-y-6 flex flex-col"
           >
             <Input
-              label="username"
-              name="username"
+              label="registration number"
+              name="user_reg_no"
               onChange={handleChange}
-              value={values.username}
+              value={values.user_reg_no}
             />
             <Input
               label="password"
@@ -126,7 +126,7 @@ export default function Home() {
           </form>
           <div className="w-full text-center">
             <Success
-              message={`welcome back ${values.username}. redirecting... `}
+              message={`welcome back. redirecting... `}
               success={success}
             />
             <ErrorMessage errors={errors} />

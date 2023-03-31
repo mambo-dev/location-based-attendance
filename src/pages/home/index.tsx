@@ -32,7 +32,7 @@ type Data = {
     user_national_id: number;
     user_id: number;
     user_role: Role | null;
-    user_username: string;
+    user_reg_no: string;
   } | null;
 };
 
@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
       user_password: false,
       user_id: true,
       user_role: true,
-      user_username: true,
+      user_reg_no: true,
     },
   });
 

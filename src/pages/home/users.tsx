@@ -32,7 +32,7 @@ export default function Users({ data }: Props) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const headers = [
     "profile image",
-    "username",
+    "reg no",
     "full name",
     "email",
     "role",
@@ -78,7 +78,7 @@ export default function Users({ data }: Props) {
                   />
                 </div>
               </th>
-              <td className="py-4 px-1">{user.user_username}</td>
+              <td className="py-4 px-1">{user.user_reg_no}</td>
               <td className="py-4 px-1">
                 {user.user_role === "admin"
                   ? `${user.Admin?.admin_full_name}`
@@ -163,7 +163,7 @@ type LoggedInUser = {
   Student: Student | null;
   user_id: number;
   user_role: Role | null;
-  user_username: string;
+  user_reg_no: string;
 } | null;
 
 //@ts-ignore
@@ -203,7 +203,7 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
       user_password: false,
       user_id: true,
       user_role: true,
-      user_username: true,
+      user_reg_no: true,
     },
   });
 

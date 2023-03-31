@@ -36,11 +36,11 @@ export default async function handler(
         errors: [...noEmptyValues],
       });
     }
-    const { username, password } = req.body;
+    const { user_reg_no, password } = req.body;
 
     const findUser = await prisma.user.findUnique({
       where: {
-        user_username: username,
+        user_reg_no: user_reg_no,
       },
     });
 
@@ -49,7 +49,7 @@ export default async function handler(
         loggedin: null,
         errors: [
           {
-            message: "incorrect username or password",
+            message: "invalid registration no or password",
           },
         ],
       });
@@ -61,14 +61,14 @@ export default async function handler(
         loggedin: null,
         errors: [
           {
-            message: "incorrect username or password",
+            message: "incorrect registration no or password",
           },
         ],
       });
     }
 
     var access_token = jwt.sign(
-      { user_id: findUser?.user_id, username: findUser?.user_username },
+      { user_id: findUser?.user_id, user_reg_no: findUser?.user_reg_no },
       `${process.env.JWT_SECRET}`,
       {
         expiresIn: "2h",

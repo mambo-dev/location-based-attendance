@@ -13,7 +13,7 @@ datasource db {
 
 model User {
   user_id       Int      @id @default(autoincrement())
-  user_username String   @unique
+  user_reg_no   String   @unique
   user_password String
   user_role     Role
   Student       Student?
@@ -33,6 +33,8 @@ model Student {
   student_profile_picture String
   student_user            User   @relation(fields: [student_user_id], onDelete: Cascade, references: [user_id])
   student_user_id         Int    @unique
+  student_course          Course @relation(fields: [student_course_id], onDelete: Cascade, references: [course_id])
+  student_course_id       Int    @unique
 }
 
 model Admin {
@@ -52,11 +54,12 @@ model School {
 }
 
 model Course {
-  course_id          Int    @id @default(autoincrement())
+  course_id          Int      @id @default(autoincrement())
   course_title       String
   course_description String
   course_short_name  String
   Unit               Unit[]
+  Student            Student?
 }
 
 model Unit {

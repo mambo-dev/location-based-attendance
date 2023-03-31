@@ -68,11 +68,11 @@ export default async function handler(
         errors: [...noEmptyValues],
       });
     }
-    const { role, username, password, confirmPassword } = req.body;
+    const { role, user_reg_no, password, confirmPassword } = req.body;
 
     const usernameExists = await prisma.user.findUnique({
       where: {
-        user_username: username,
+        user_reg_no: user_reg_no,
       },
     });
 
@@ -81,7 +81,7 @@ export default async function handler(
         created: false,
         errors: [
           {
-            message: `already have an account under this username`,
+            message: `already have an account under this number`,
           },
         ],
       });
@@ -105,7 +105,7 @@ export default async function handler(
     await prisma.user.create({
       data: {
         user_password: hash,
-        user_username: username,
+        user_reg_no: user_reg_no,
         user_role: role,
       },
     });
