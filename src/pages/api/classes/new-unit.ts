@@ -6,8 +6,14 @@ import { DecodedToken, HandleError } from "../../../backend-utils/types";
 import { handleBodyNotEmpty } from "../../../backend-utils/validation";
 import * as argon2 from "argon2";
 import jwtDecode from "jwt-decode";
-import { getYear } from "date-fns";
+import {
+  eachHourOfInterval,
+  getTime,
+  getYear,
+  isWithinInterval,
+} from "date-fns";
 import { v4 as uuidv4 } from "uuid";
+import { formatNumber } from "../users/create";
 
 type Data = {
   created: boolean | null;
@@ -71,21 +77,33 @@ export default async function handler(
       });
     }
     const {
-      role,
+      course_id,
+      title,
+      code,
       description,
-      password,
-      firstName,
-      secondName,
-      lastName,
-      courseId,
+      total_classes,
 
-      email,
-      profilePicture,
+      end_time,
+      start_time,
     } = req.body;
+
+    if (total_classes > 15) {
+      return res.status(200).json({
+        created: false,
+        errors: [
+          {
+            message: `cannot exceed 15 classes`,
+          },
+        ],
+      });
+    }
 
     const findCourse = await prisma.course.findUnique({
       where: {
-        course_id: Number(courseId),
+        course_id: Number(course_id),
+      },
+      include: {
+        Student: true,
       },
     });
 
@@ -100,72 +118,59 @@ export default async function handler(
       });
     }
 
-    const createRandomNumber = await prisma.regNo.create({});
-    const randomNumber = formatNumber(createRandomNumber.reg_no_id);
-
-    const user_reg_no =
-      role === "student"
-        ? `${findCourse.course_short_name.toLowerCase()}${firstName.toLowerCase()}${getYear(
-            new Date()
-          )}${randomNumber}`
-        : `${firstName}Admin${randomNumber}`.toLowerCase();
-
-    const usernameExists = await prisma.user.findUnique({
-      where: {
-        user_reg_no: user_reg_no,
+    const newUnit = await prisma.unit.create({
+      data: {
+        unit_code: code,
+        unit_description: description,
+        unit_title: title,
+        unit_total_classes: Number(total_classes),
+        unit_course: {
+          connect: {
+            course_id: findCourse.course_id,
+          },
+        },
       },
     });
 
-    if (usernameExists) {
-      return res.status(200).json({
-        created: false,
-        errors: [
-          {
-            message: `already have an account under this number`,
-          },
-        ],
-      });
-    }
+    const students = findCourse.Student;
 
-    const hash = await argon2.hash(password, {
-      hashLength: 10,
-    });
-
-    if (role === "student") {
-      await prisma.user.create({
+    for (const student of students) {
+      await prisma.unitEnrollment.create({
         data: {
-          user_password: hash,
-          user_reg_no: user_reg_no,
-          user_role: role,
-          Student: {
-            create: {
-              student_full_name: `${firstName} ${secondName} ${lastName}`,
-              student_description: description,
-              student_email: email,
-              student_profile_picture: profilePicture,
-              student_course: {
-                connect: {
-                  course_id: findCourse.course_id,
-                },
-              },
+          unit_enrollment_student: {
+            connect: {
+              student_id: student.student_id,
+            },
+          },
+          unit_enrollment_unit: {
+            connect: {
+              unit_id: newUnit.unit_id,
             },
           },
         },
       });
-    } else {
-      await prisma.user.create({
+    }
+
+    const isExpired = getTime(new Date()) > end_time;
+
+    const isUpComing = getTime(new Date()) < end_time;
+
+    for (let i = 0; i < total_classes; i++) {
+      await prisma.class.create({
         data: {
-          user_password: hash,
-          user_reg_no: user_reg_no,
-          user_role: role,
-          Admin: {
-            create: {
-              admin_description: description,
-              admin_email: email,
-              admin_full_name: `${firstName} ${secondName} ${lastName}`,
-              admin_profile_picture: profilePicture,
+          class_end_time: end_time,
+          class_start_time: start_time,
+          class_unit: {
+            connect: {
+              unit_id: newUnit.unit_id,
             },
           },
+          class_type: isExpired
+            ? "expired"
+            : isUpComing
+            ? "upcoming"
+            : "ongoing",
+          class_name: `CLASS-${formatNumber(i)}`,
         },
       });
     }
@@ -183,15 +188,5 @@ export default async function handler(
         },
       ],
     });
-  }
-}
-
-export function formatNumber(number: number): string {
-  if (number < 10) {
-    return `00${number}`;
-  } else if (number < 100) {
-    return `0${number}`;
-  } else {
-    return number.toString();
   }
 }

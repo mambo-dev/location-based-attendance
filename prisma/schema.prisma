@@ -38,7 +38,7 @@ model Student {
   student_user            User             @relation(fields: [student_user_id], onDelete: Cascade, references: [user_id])
   student_user_id         Int              @unique
   student_course          Course           @relation(fields: [student_course_id], onDelete: Cascade, references: [course_id])
-  student_course_id       Int              @unique
+  student_course_id       Int
   enrollments             UnitEnrollment[]
 }
 
@@ -59,12 +59,12 @@ model School {
 }
 
 model Course {
-  course_id          Int      @id @default(autoincrement())
+  course_id          Int       @id @default(autoincrement())
   course_title       String
   course_description String
   course_short_name  String
   Unit               Unit[]
-  Student            Student?
+  Student            Student[]
 }
 
 model Unit {
@@ -89,8 +89,8 @@ model UnitEnrollment {
 
 model Class {
   class_id           Int          @id @default(autoincrement())
-  class_course       Unit         @relation(fields: [class_course_id], onDelete: Cascade, references: [unit_id])
-  class_course_id    Int
+  class_unit         Unit         @relation(fields: [class_unit_id], onDelete: Cascade, references: [unit_id])
+  class_unit_id      Int
   class_name         String
   class_start_time   DateTime
   class_end_time     DateTime

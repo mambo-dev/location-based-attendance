@@ -56,8 +56,8 @@ export default function NewUnit({ token, courses }: Props) {
         `/api/classes/new-unit`,
         {
           ...values,
-          end_date: endTime,
-          start_date: startTime,
+          end_time: endTime,
+          start_time: startTime,
           course_id: course.course_id,
         },
         {
@@ -117,7 +117,7 @@ export default function NewUnit({ token, courses }: Props) {
           label="title"
           name="title"
           value={values.title}
-          colSpan="col-span-2"
+          colSpan="md:col-span-2"
           onChange={handleChange}
         />
         <Input
@@ -134,7 +134,7 @@ export default function NewUnit({ token, courses }: Props) {
           onChange={handleChange}
         />
       </div>
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-2">
         <DatePickerComponent
           date={startTime}
           setDate={setStartTime}
