@@ -100,42 +100,6 @@ export default async function handler(
       hashLength: 10,
     });
 
-    if (profilePicture === "") {
-      if (userExists.user_role === "student") {
-        await prisma.user.update({
-          where: {
-            user_id: userExists.user_id,
-          },
-          data: {
-            user_role: role,
-            Student: {
-              update: {
-                student_full_name: `${firstName} ${secondName} ${lastName}`,
-                student_description: description,
-                student_email: email,
-              },
-            },
-          },
-        });
-      } else {
-        await prisma.user.update({
-          where: {
-            user_id: userExists.user_id,
-          },
-          data: {
-            user_role: role,
-            Admin: {
-              update: {
-                admin_description: description,
-                admin_email: email,
-                admin_full_name: `${firstName} ${secondName} ${lastName}`,
-              },
-            },
-          },
-        });
-      }
-    }
-
     if (password === "") {
       if (userExists.user_role === "student") {
         await prisma.user.update({

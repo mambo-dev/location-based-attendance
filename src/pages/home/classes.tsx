@@ -9,33 +9,27 @@ import { DecodedToken } from "../../backend-utils/types";
 import { useAuth } from "../../components/hooks/auth";
 import Layout from "../../components/layout/layout";
 import MenuOptions from "../../components/utils/menu";
-import { LoggedInUser } from "./users";
 
 type Props = {
   data: Data;
 };
 
-export default function Home({ data }: Props) {
+export default function Class({ data }: Props) {
   const { token, user } = data;
   const { setImageUrl } = useAuth();
-  useEffect(() => {
-    setImageUrl(
-      Cookies.set(
-        "profile",
-        `${
-          user?.user_role === "admin"
-            ? user?.Admin?.admin_profile_picture
-            : user?.Student?.student_profile_picture
-        }`
-      )
-    );
-  });
+
   return <div className="w-full h-full"></div>;
 }
 
 type Data = {
   token: string;
-  user: LoggedInUser | null;
+  user: {
+    Admin: Admin | null;
+    user_national_id: number;
+    user_id: number;
+    user_role: Role | null;
+    user_reg_no: string;
+  } | null;
 };
 
 //@ts-ignore
@@ -89,6 +83,6 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
   };
 };
 
-Home.getLayout = function getLayout(page: React.ReactElement) {
+Class.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>;
 };

@@ -86,7 +86,9 @@ export default function UpdateProfile({ token, courses, selectedUser }: Props) {
     setErrors([]);
 
     try {
-      let url: string | undefined = "";
+      let url: string | undefined = isAdmin
+        ? selectedUser.Admin?.admin_profile_picture
+        : selectedUser?.Student?.student_profile_picture;
 
       if (file) {
         const filename = `${uuidv4()}-${file.name}`;
