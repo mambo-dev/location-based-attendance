@@ -30,15 +30,16 @@ enum Role {
 }
 
 model Student {
-  student_id              Int    @id @default(autoincrement())
+  student_id              Int              @id @default(autoincrement())
   student_full_name       String
-  student_email           String @unique
+  student_email           String           @unique
   student_description     String
   student_profile_picture String
-  student_user            User   @relation(fields: [student_user_id], onDelete: Cascade, references: [user_id])
-  student_user_id         Int    @unique
-  student_course          Course @relation(fields: [student_course_id], onDelete: Cascade, references: [course_id])
-  student_course_id       Int    @unique
+  student_user            User             @relation(fields: [student_user_id], onDelete: Cascade, references: [user_id])
+  student_user_id         Int              @unique
+  student_course          Course           @relation(fields: [student_course_id], onDelete: Cascade, references: [course_id])
+  student_course_id       Int              @unique
+  enrollments             UnitEnrollment[]
 }
 
 model Admin {
@@ -67,13 +68,23 @@ model Course {
 }
 
 model Unit {
-  unit_id          Int     @id @default(autoincrement())
-  unit_title       String
-  unit_code        String
-  unit_description String
-  unit_course      Course  @relation(fields: [unit_course_id], onDelete: Cascade, references: [course_id])
-  unit_course_id   Int
-  Class            Class[]
+  unit_id            Int              @id @default(autoincrement())
+  unit_title         String
+  unit_code          String
+  unit_description   String
+  unit_course        Course           @relation(fields: [unit_course_id], onDelete: Cascade, references: [course_id])
+  unit_course_id     Int
+  Class              Class[]
+  unit_total_classes Int
+  enrollments        UnitEnrollment[]
+}
+
+model UnitEnrollment {
+  unit_enrollment_id         Int     @id @default(autoincrement())
+  unit_enrollment_student_id Int
+  unit_enrollment_unit_id    Int
+  unit_enrollment_student    Student @relation(fields: [unit_enrollment_student_id], references: [student_id])
+  unit_enrollment_unit       Unit    @relation(fields: [unit_enrollment_unit_id], references: [unit_id])
 }
 
 model Class {
@@ -81,10 +92,9 @@ model Class {
   class_course       Unit         @relation(fields: [class_course_id], onDelete: Cascade, references: [unit_id])
   class_course_id    Int
   class_name         String
-  class_description  String
   class_start_time   DateTime
   class_end_time     DateTime
-  class_type         ClassType
+  class_type         ClassType    @default(upcoming)
   class_location_lat String?
   class_location_lng String?
   Attendance         Attendance[]
