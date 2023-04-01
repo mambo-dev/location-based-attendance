@@ -7,12 +7,21 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
+import { LoggedInUser } from "../../pages/home/users";
 
 type Props = {
   unit: Unit;
+  user: LoggedInUser;
+  setDeleteUnit: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditUnit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function UnitComp({ unit }: Props) {
+export default function UnitComp({
+  unit,
+  user,
+  setDeleteUnit,
+  setEditUnit,
+}: Props) {
   const { enrollments, unit_code, unit_course, unit_description, unit_title } =
     unit;
   const remainingStudents = enrollments.slice(4, enrollments.length - 1).length;
@@ -72,6 +81,27 @@ export default function UnitComp({ unit }: Props) {
             </span>
           )}
         </div>
+      </div>
+      <div className="py-2 mt-2 flex gap-x-4">
+        <div className=" invisible w-14 h-5 rounded-full flex items-center justify-center bg-green-500 shadow-lg">
+          <BookOpenIcon className="w-6 h-6" />
+        </div>
+        {user?.user_role === "admin" && (
+          <div className="w-full px-2 flex  items-center justify-end gap-x-4">
+            <button
+              onClick={() => setEditUnit(true)}
+              className="outline-none text-blue-500"
+            >
+              edit
+            </button>
+            <button
+              onClick={() => setDeleteUnit(true)}
+              className="outline-none text-red-500"
+            >
+              delete
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

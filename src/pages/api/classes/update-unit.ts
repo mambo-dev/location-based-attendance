@@ -19,7 +19,7 @@ import { v4 as uuidv4 } from "uuid";
 import { formatNumber } from "../users/create";
 
 type Data = {
-  created: boolean | null;
+  updated: boolean | null;
   errors: HandleError[] | [];
 };
 
@@ -30,7 +30,7 @@ export default async function handler(
   try {
     if (req.method !== "POST") {
       return res.status(403).json({
-        created: false,
+        updated: false,
         errors: [
           {
             message: "invalid method",
@@ -41,7 +41,7 @@ export default async function handler(
 
     if (!(await handleAuthorization(req))) {
       return res.status(401).json({
-        created: null,
+        updated: null,
         errors: [
           {
             message: "unauthorized access please login",
@@ -62,7 +62,7 @@ export default async function handler(
 
     if (user?.user_role !== "admin") {
       return res.status(401).json({
-        created: null,
+        updated: null,
         errors: [
           {
             message: "only admins can create a user",
@@ -75,45 +75,21 @@ export default async function handler(
 
     if (noEmptyValues.length > 0) {
       return res.status(200).json({
-        created: false,
+        updated: false,
         errors: [...noEmptyValues],
       });
     }
-    const {
-      course_id,
-      title,
-      code,
-      description,
-      total_classes,
-      latitude,
-      longitude,
-      end_time,
-      start_time,
-    } = req.body;
+    const { unit_id, title, code, description } = req.body;
 
-    if (total_classes > 15) {
-      return res.status(200).json({
-        created: false,
-        errors: [
-          {
-            message: `cannot exceed 15 classes`,
-          },
-        ],
-      });
-    }
-
-    const findCourse = await prisma.course.findUnique({
+    const findUnit = await prisma.unit.findUnique({
       where: {
-        course_id: Number(course_id),
-      },
-      include: {
-        Student: true,
+        unit_id: Number(unit_id),
       },
     });
 
-    if (!findCourse) {
+    if (!findUnit) {
       return res.status(200).json({
-        created: false,
+        updated: false,
         errors: [
           {
             message: `error finding course requested`,
@@ -122,80 +98,24 @@ export default async function handler(
       });
     }
 
-    const newUnit = await prisma.unit.create({
+    await prisma.unit.update({
+      where: {
+        unit_id: Number(unit_id),
+      },
       data: {
         unit_code: code,
         unit_description: description,
         unit_title: title,
-        unit_total_classes: Number(total_classes),
-        unit_course: {
-          connect: {
-            course_id: findCourse.course_id,
-          },
-        },
       },
     });
 
-    const students = findCourse.Student;
-
-    for (const student of students) {
-      await prisma.unitEnrollment.create({
-        data: {
-          unit_enrollment_student: {
-            connect: {
-              student_id: student.student_id,
-            },
-          },
-          unit_enrollment_unit: {
-            connect: {
-              unit_id: newUnit.unit_id,
-            },
-          },
-        },
-      });
-    }
-
-    const isExpired = getTime(new Date()) > end_time;
-
-    const isUpComing = getTime(new Date()) < end_time;
-
-    const classDates = [];
-    for (let i = 0; i < total_classes; i++) {
-      classDates.push(addWeeks(start_time, i));
-    }
-    const classDuration = differenceInMinutes(end_time, start_time);
-
-    for (let i = 0; i < total_classes; i++) {
-      const classStartTime = classDates[i];
-      const classEndTime = addMinutes(classStartTime, classDuration);
-      await prisma.class.create({
-        data: {
-          class_end_time: classEndTime,
-          class_start_time: classStartTime,
-          class_unit: {
-            connect: {
-              unit_id: newUnit.unit_id,
-            },
-          },
-          class_type: isExpired
-            ? "expired"
-            : isUpComing
-            ? "upcoming"
-            : "ongoing",
-          class_name: `CLASS-${formatNumber(i)}`,
-          class_location_lat: Number(latitude),
-          class_location_lng: Number(longitude),
-        },
-      });
-    }
-
     return res.status(200).json({
-      created: true,
+      updated: true,
       errors: [],
     });
   } catch (error: any) {
     return res.status(500).json({
-      created: false,
+      updated: false,
       errors: [
         {
           message: error.message,

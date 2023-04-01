@@ -48,6 +48,8 @@ export default function NewUnit({ token, courses }: Props) {
     code: "",
     description: "",
     total_classes: 0,
+    latitude: 0,
+    longitude: 0,
   };
   const handleNewUnit = async () => {
     setLoading(true);
