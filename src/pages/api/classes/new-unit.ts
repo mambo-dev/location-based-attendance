@@ -82,7 +82,8 @@ export default async function handler(
       code,
       description,
       total_classes,
-
+      latitude,
+      longitude,
       end_time,
       start_time,
     } = req.body;
@@ -171,6 +172,8 @@ export default async function handler(
             ? "upcoming"
             : "ongoing",
           class_name: `CLASS-${formatNumber(i)}`,
+          class_location_lat: latitude,
+          class_location_lng: longitude,
         },
       });
     }

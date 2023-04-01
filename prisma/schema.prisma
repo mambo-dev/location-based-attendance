@@ -95,8 +95,8 @@ model Class {
   class_start_time   DateTime
   class_end_time     DateTime
   class_type         ClassType    @default(upcoming)
-  class_location_lat String?
-  class_location_lng String?
+  class_location_lat Float        @default(-0.7151004800802717)
+  class_location_lng Float        @default(37.14734634602431)
   Attendance         Attendance[]
 }
 

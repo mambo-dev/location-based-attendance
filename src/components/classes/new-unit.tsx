@@ -10,6 +10,7 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Course } from "@prisma/client";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Map from "../maps/maps";
 
 type Props = {
   token: string;
@@ -138,16 +139,32 @@ export default function NewUnit({ token, courses }: Props) {
         <DatePickerComponent
           date={startTime}
           setDate={setStartTime}
-          label="start time"
+          label="start time (first class only)"
           showTimeSelectOnly
           dateFormat="h:mm aa"
         />
         <DatePickerComponent
           date={endTime}
           setDate={setEndTime}
-          label="end time"
-          showTimeSelectOnly
+          label="end time (first class only)"
           dateFormat="h:mm aa"
+        />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2">
+        <Input
+          label="latitude"
+          name="latitude"
+          type="number"
+          value={values.latitude}
+          colSpan="md:col-span-1"
+          onChange={handleChange}
+        />
+        <Input
+          label="longitude"
+          name="longitude"
+          type="number"
+          value={values.longitude}
+          onChange={handleChange}
         />
       </div>
       <TextArea
@@ -201,6 +218,7 @@ export default function NewUnit({ token, courses }: Props) {
           </div>
         )}
       </div>
+      <div></div>
       <button
         type="submit"
         className="mt-2 py-2 w-full rounded-lg  bg-gradient-to-tr from-green-600 to-green-500 focus:ring-2 focus:ring-green-300 ring-offset-1 shadow text-white text-sm font-medium  focus:border  border-green-300"
@@ -212,3 +230,5 @@ export default function NewUnit({ token, courses }: Props) {
     </form>
   );
 }
+
+//-0.23504927422888872, 35.73405871731619

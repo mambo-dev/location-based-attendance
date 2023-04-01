@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@googlemaps/react-wrapper": "^1.1.35",
     "@headlessui/react": "^1.7.13",
     "@heroicons/react": "^2.0.16",
     "@nivo/bar": "^0.80.0",
     "@nivo/core": "^0.80.0",
     "@nivo/line": "^0.80.0",
     "@prisma/client": "^4.11.0",
+    "@react-google-maps/api": "^2.18.1",
     "@supabase/supabase-js": "^2.12.0",
     "@types/cookie": "^0.5.1",
     "@types/file-saver": "^2.0.5",
@@ -31,6 +33,7 @@
     "date-fns": "^2.29.3",
     "eslint": "8.37.0",
     "eslint-config-next": "13.2.4",
+    "google-map-react": "^2.2.0",
     "js-cookie": "^3.0.1",
     "jsonwebtoken": "^9.0.0",
     "jwt-decode": "^3.1.2",
@@ -44,6 +47,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/google-map-react": "^2.1.7",
     "@types/react-datepicker": "^4.10.0",
     "@types/uuid": "^9.0.1",
     "autoprefixer": "^10.4.14",
