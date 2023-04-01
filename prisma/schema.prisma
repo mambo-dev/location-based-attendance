@@ -40,6 +40,7 @@ model Student {
   student_course          Course           @relation(fields: [student_course_id], onDelete: Cascade, references: [course_id])
   student_course_id       Int
   enrollments             UnitEnrollment[]
+  Attendance              Attendance[]
 }
 
 model Admin {
@@ -107,8 +108,10 @@ enum ClassType {
 }
 
 model Attendance {
-  attendane_id        Int     @id @default(autoincrement())
-  attendane_class     Class   @relation(fields: [attendance_class_id], onDelete: Cascade, references: [class_id])
-  attendance_class_id Int
-  attendance_status   Boolean
+  attendane_id          Int     @id @default(autoincrement())
+  attendane_class       Class   @relation(fields: [attendance_class_id], onDelete: Cascade, references: [class_id])
+  attendance_class_id   Int
+  attendance_status     Boolean
+  attendane_student     Student @relation(fields: [attendance_student_id], onDelete: Cascade, references: [student_id])
+  attendance_student_id Int
 }

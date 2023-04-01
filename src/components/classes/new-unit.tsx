@@ -10,7 +10,7 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Course } from "@prisma/client";
 import axios from "axios";
 import { useRouter } from "next/router";
-import Map from "../maps/maps";
+import Map from "../class-helpers/maps";
 
 type Props = {
   token: string;

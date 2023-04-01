@@ -14,6 +14,7 @@ import {
   addWeeks,
   differenceInMinutes,
   addMinutes,
+  format,
 } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { formatNumber } from "../users/create";
@@ -155,10 +156,6 @@ export default async function handler(
       });
     }
 
-    const isExpired = new Date() > new Date(`${end_time}`);
-
-    const isUpComing = new Date() < new Date(`${start_time}`);
-
     const classDates = [];
     for (let i = 0; i < total_classes; i++) {
       classDates.push(addWeeks(new Date(`${start_time}`), i));
@@ -171,6 +168,8 @@ export default async function handler(
     for (let i = 0; i < total_classes; i++) {
       const classStartTime = classDates[i];
       const classEndTime = addMinutes(classStartTime, classDuration);
+      const isExpired = classEndTime < new Date(classStartTime);
+      const isUpComing = new Date(classStartTime) > new Date(`${start_time}`);
       await prisma.class.create({
         data: {
           class_end_time: classEndTime,
