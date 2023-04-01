@@ -155,15 +155,18 @@ export default async function handler(
       });
     }
 
-    const isExpired = getTime(new Date()) > end_time;
+    const isExpired = new Date() > new Date(`${end_time}`);
 
-    const isUpComing = getTime(new Date()) < end_time;
+    const isUpComing = new Date() < new Date(`${start_time}`);
 
     const classDates = [];
     for (let i = 0; i < total_classes; i++) {
-      classDates.push(addWeeks(start_time, i));
+      classDates.push(addWeeks(new Date(`${start_time}`), i));
     }
-    const classDuration = differenceInMinutes(end_time, start_time);
+    const classDuration = differenceInMinutes(
+      new Date(`${end_time}`),
+      new Date(`${start_time}`)
+    );
 
     for (let i = 0; i < total_classes; i++) {
       const classStartTime = classDates[i];

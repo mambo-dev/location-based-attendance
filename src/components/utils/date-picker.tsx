@@ -21,7 +21,7 @@ export default function DatePickerComponent({
   date,
   setDate,
   label,
-  showTimeSelectOnly,
+
   dateFormat,
 }: Props) {
   return (
@@ -34,7 +34,6 @@ export default function DatePickerComponent({
         todayButton
         showTimeSelect
         minDate={todayStart}
-        maxDate={todayStart}
         onChange={(date) => setDate(date)}
         dateFormat={dateFormat}
         placeholderText="select date"

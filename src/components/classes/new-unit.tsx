@@ -143,13 +143,13 @@ export default function NewUnit({ token, courses }: Props) {
           setDate={setStartTime}
           label="start time (first class only)"
           showTimeSelectOnly
-          dateFormat="h:mm aa"
+          dateFormat="MM/dd/yyy h:mm aa"
         />
         <DatePickerComponent
           date={endTime}
           setDate={setEndTime}
           label="end time (first class only)"
-          dateFormat="h:mm aa"
+          dateFormat="MM/dd/yyy h:mm aa"
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2">
