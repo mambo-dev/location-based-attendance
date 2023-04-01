@@ -22,6 +22,9 @@ import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
 import SidePanel from "../../components/utils/sidepanel";
 import NewUnit from "../../components/classes/new-unit";
 import UnitComp from "../../components/classes/unit";
+import { LoggedInUser } from "./users";
+import Modal from "../../components/utils/Modal";
+import DeleteUnit from "../../components/classes/delete-unit";
 
 type Props = {
   data: Data;
@@ -33,6 +36,7 @@ export default function Class({ data }: Props) {
   const [openEditSidePanel, setOpenEditSidePanel] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [clientUnits, setClientUnits] = useState<Unit[]>([]);
+  const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
   const [query, setQuery] = useState("");
   const isAdmin = user?.user_role === "admin";
 
@@ -77,7 +81,16 @@ export default function Class({ data }: Props) {
         </div>
         <div className="w-full grid grid-cols-1 md:grid-cols-3 mt-2 gap-4 py-4">
           {clientUnits.map((unit) => {
-            return <UnitComp key={unit.unit_id} unit={unit} />;
+            return (
+              <UnitComp
+                key={unit.unit_id}
+                unit={unit}
+                user={user}
+                setDeleteUnit={setOpenDeleteModal}
+                setEditUnit={setOpenEditSidePanel}
+                setSelectedUnit={setSelectedUnit}
+              />
+            );
           })}
         </div>
       </div>
@@ -89,19 +102,29 @@ export default function Class({ data }: Props) {
       >
         <NewUnit token={token} courses={courses} />
       </SidePanel>
+
+      <SidePanel
+        span="max-w-2xl"
+        open={openCreateSidePanel}
+        setOpen={setOpenCreateSidePanel}
+      >
+        <NewUnit token={token} courses={courses} />
+      </SidePanel>
+
+      <Modal isOpen={openDeleteModal} setIsOpen={setOpenDeleteModal}>
+        <DeleteUnit
+          selectedUnit={selectedUnit}
+          token={token}
+          setIsOpen={setOpenDeleteModal}
+        />
+      </Modal>
     </>
   );
 }
 
 type Data = {
   token: string;
-  user: {
-    Admin: Admin | null;
-    user_national_id: number;
-    user_id: number;
-    user_role: Role | null;
-    user_reg_no: string;
-  } | null;
+  user: LoggedInUser;
   units: Unit[];
   courses: Course[];
 };

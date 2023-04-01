@@ -14,6 +14,7 @@ type Props = {
   user: LoggedInUser;
   setDeleteUnit: React.Dispatch<React.SetStateAction<boolean>>;
   setEditUnit: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedUnit: React.Dispatch<React.SetStateAction<Unit | null>>;
 };
 
 export default function UnitComp({
@@ -21,6 +22,7 @@ export default function UnitComp({
   user,
   setDeleteUnit,
   setEditUnit,
+  setSelectedUnit,
 }: Props) {
   const { enrollments, unit_code, unit_course, unit_description, unit_title } =
     unit;
@@ -89,13 +91,19 @@ export default function UnitComp({
         {user?.user_role === "admin" && (
           <div className="w-full px-2 flex  items-center justify-end gap-x-4">
             <button
-              onClick={() => setEditUnit(true)}
+              onClick={() => {
+                setEditUnit(true);
+                setSelectedUnit(unit);
+              }}
               className="outline-none text-blue-500"
             >
               edit
             </button>
             <button
-              onClick={() => setDeleteUnit(true)}
+              onClick={() => {
+                setDeleteUnit(true);
+                setSelectedUnit(unit);
+              }}
               className="outline-none text-red-500"
             >
               delete

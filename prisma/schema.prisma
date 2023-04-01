@@ -83,8 +83,8 @@ model UnitEnrollment {
   unit_enrollment_id         Int     @id @default(autoincrement())
   unit_enrollment_student_id Int
   unit_enrollment_unit_id    Int
-  unit_enrollment_student    Student @relation(fields: [unit_enrollment_student_id], references: [student_id])
-  unit_enrollment_unit       Unit    @relation(fields: [unit_enrollment_unit_id], references: [unit_id])
+  unit_enrollment_student    Student @relation(fields: [unit_enrollment_student_id], onDelete: Cascade, references: [student_id])
+  unit_enrollment_unit       Unit    @relation(fields: [unit_enrollment_unit_id], onDelete: Cascade, references: [unit_id])
 }
 
 model Class {
