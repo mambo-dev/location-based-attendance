@@ -6,6 +6,7 @@ import {
   Unit as UnitType,
   UnitEnrollment,
   Class,
+  Attendance,
 } from "@prisma/client";
 
 import jwtDecode from "jwt-decode";
@@ -24,6 +25,7 @@ import ErrorMessage from "../../../components/utils/error";
 import QRCodeGenerator from "../../../components/class-helpers/qr-code";
 import { LoggedInUser } from "../users";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 type Props = {
   data: Data;
@@ -33,7 +35,22 @@ export default function UnitPage({ data }: Props) {
   const { token, user, unit, courses } = data;
   const [isWithinRegion, setIsWithinRegion] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [suceess, setSuccess] = useState(false);
   const [errors, setErrors] = useState<HandleError[]>([]);
+  const router = useRouter();
+  const { student_id, class_id, uid } = router.query;
+  useEffect(() => {
+    if (student_id && class_id) {
+      axios
+        .get(
+          `/api/attendance/sign?unit_id=${uid}&&student_id=${student_id}&&class_id=${class_id}`
+        )
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((e: any) => {});
+    }
+  }, [student_id, class_id, uid]);
 
   const isAdmin = user?.user_role === "admin";
 
@@ -67,11 +84,8 @@ export default function UnitPage({ data }: Props) {
           className="absolute right-0 top-0 bottom-0  w-50% md:w-[30%] divide-y divide-gray-200  border border-slate-300 bg-white shadow-lg"
         >
           {unit?.Class.map((classes) => {
-            console.log(
-              unit.unit_id,
-              classes.class_id,
-              user?.Student?.student_id
-            );
+            console.log(classes.Attendance);
+
             return (
               <DisclosureComp
                 key={classes.class_id}
@@ -79,7 +93,7 @@ export default function UnitPage({ data }: Props) {
                   <div className="w-full flex items-center justify-start gap-x-4 py-2">
                     <div className="flex-1 flex items-center gap-x-4">
                       <span>{classes.class_name}</span>
-                      <span>{}</span>
+                      <span>{true ? "signed" : "not signed"}</span>
 
                       <span>
                         {classes.class_type === "expired" ? (
@@ -100,7 +114,7 @@ export default function UnitPage({ data }: Props) {
                     <span className="mr-10 text-xs font-semibold rounded border-slate-300 border shadow bg-gradient-to-tr from-white to-slate-50 flex items-center justify-center py-1 px-2">
                       {format(
                         new Date(`${classes.class_end_time}`),
-                        "MM/dd/yyyy mm:hh"
+                        "MM/dd/yyy h:mm aa"
                       )}
                     </span>
                   </div>
@@ -118,9 +132,13 @@ export default function UnitPage({ data }: Props) {
                         </span>
                       ) : isWithinRegion ? (
                         <span className="w-full flex items-center justify-center">
-                          <QRCodeGenerator
-                            url={`/units/${unit.unit_id}?student_id=${user?.Student?.student_id}&class_id=${classes.class_id}&unit_id=${unit.unit_id}`}
-                          />
+                          {!isAdmin ? (
+                            <QRCodeGenerator
+                              url={`${process.env.NEXT_PUBLIC_URL}units/${unit.unit_id}?student_id=${user?.Student?.student_id}&class_id=${classes.class_id}&unit_id=${unit.unit_id}`}
+                            />
+                          ) : (
+                            "admins cannot scan qr"
+                          )}
                         </span>
                       ) : (
                         <span className="py-2 px-2  rounded-md w-full font-bold text-red-950 bg-red-100">
@@ -148,7 +166,9 @@ type Data = {
 
 type Unit =
   | (UnitType & {
-      Class: Class[];
+      Class: (Class & {
+        Attendance: Attendance[];
+      })[];
       unit_course: Course;
       enrollments: (UnitEnrollment & {
         unit_enrollment_student: Student;
@@ -162,11 +182,6 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
 ) => {
   const { req } = context;
   const { student_id, class_id, uid } = context.query;
-  if (student_id && class_id) {
-    await axios.get(
-      `/api/attendance/sign?unit_id=${uid}&&student_id=${student_id}&&class_id=${class_id}`
-    );
-  }
 
   const access_token = req.cookies.access_token;
   if (!access_token || access_token.trim() === "") {
@@ -214,7 +229,11 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (
         },
       },
       unit_course: true,
-      Class: true,
+      Class: {
+        include: {
+          Attendance: true,
+        },
+      },
     },
   });
 
