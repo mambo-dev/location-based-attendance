@@ -10,10 +10,6 @@ const navLink: {
   name: string;
 }[] = [
   {
-    link: "/home",
-    name: "overview",
-  },
-  {
     link: "/home/users",
     name: "users",
   },
@@ -33,7 +29,7 @@ export default function Layout({ children }: Props) {
       <header className="w-full bg-white h-20 shadow pr-4 flex justify-between ">
         <div className="flex items-center justify-center px-2  hover:bg-white hover:shadow-2xl h-full">
           <Link
-            href="/home"
+            href="/home/users"
             className="text-3xl tracking-wide font-bold bg-clip-text text-transparent bg-gradient-to-tr from-red-500 via-green-500 to-green-700"
           >
             Muranga University

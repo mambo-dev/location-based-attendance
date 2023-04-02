@@ -49,7 +49,7 @@ export default function Home() {
         setSuccess(false);
       }, 1000);
       setTimeout(() => {
-        router.push("/home");
+        router.push("/home/users");
       }, 2000);
       setLoading(false);
     } catch (error: any) {

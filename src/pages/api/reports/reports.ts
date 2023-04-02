@@ -40,32 +40,14 @@ export default async function handler(
     }
 
     const courses = await prisma.course.findMany({
-      select: {
-        course_id: true,
-        course_title: true,
+      include: {
         Unit: {
-          select: {
-            unit_id: true,
-            unit_code: true,
-            unit_title: true,
-            unit_description: false,
+          include: {
             Class: {
-              select: {
-                class_id: true,
-                class_name: true,
-                class_start_time: true,
-                class_end_time: true,
-                class_unit: false,
+              include: {
                 Attendance: {
-                  select: {
-                    attendance_status: true,
-                    attendane_class: false,
-                    attendane_student: {
-                      select: {
-                        student_id: true,
-                        student_full_name: true,
-                      },
-                    },
+                  include: {
+                    attendane_student: true,
                   },
                 },
               },

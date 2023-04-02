@@ -11,7 +11,7 @@ import jwtDecode from "jwt-decode";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import prisma from "../../../lib/prisma";
 import { DecodedToken } from "../../backend-utils/types";
 
@@ -24,6 +24,8 @@ import SidePanel from "../../components/utils/sidepanel";
 import UpdateProfile from "../../components/users/update";
 import DeleteUser from "../../components/users/delete";
 import Head from "next/head";
+import { useAuth } from "../../components/hooks/auth";
+import Cookies from "js-cookie";
 
 type Props = {
   data: Data;
@@ -34,6 +36,19 @@ export default function Users({ data }: Props) {
   const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
   const [openCreateSidePanel, setOpenCreateSidePanel] = useState(false);
   const [openEditSidePanel, setOpenEditSidePanel] = useState(false);
+  const { setImageUrl } = useAuth();
+  useEffect(() => {
+    setImageUrl(
+      Cookies.set(
+        "profile",
+        `${
+          user?.user_role === "admin"
+            ? user?.Admin?.admin_profile_picture
+            : user?.Student?.student_profile_picture
+        }`
+      )
+    );
+  });
 
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const headers = [
