@@ -8,3 +8,18 @@ export type DecodedToken = {
   iat: number;
   exp: number;
 };
+
+export type Report = {
+  course_id: number;
+  course_name: string;
+  unit_id: number;
+  unit_code: string;
+  unit_name: string;
+  class_id: number;
+  class_name: string;
+  class_start: Date;
+  class_end: Date;
+  student_id: number;
+  student_name: string;
+  student_attended: boolean;
+}[];
