@@ -89,8 +89,14 @@ export default async function handler(
             unit_name: unit.unit_title,
             class_id: singleClass.class_id,
             class_name: singleClass.class_name,
-            class_start: singleClass.class_start_time,
-            class_end: singleClass.class_end_time,
+            class_start: format(
+              new Date(`${singleClass.class_start_time}`),
+              "MMMM/dd/yyyy hh:mm"
+            ),
+            class_end: format(
+              new Date(`${singleClass.class_end_time}`),
+              "MMMM/dd/yyyy hh:mm"
+            ),
             student_id: att.attendane_student.student_id,
             student_name: att.attendane_student.student_full_name,
             student_attended: att.attendance_status,

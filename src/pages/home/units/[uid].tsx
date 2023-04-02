@@ -47,6 +47,7 @@ export default function UnitPage({ data }: Props) {
         )
         .then((response) => {
           console.log(response);
+          router.reload();
         })
         .catch((e: any) => {});
     }
@@ -85,7 +86,9 @@ export default function UnitPage({ data }: Props) {
         >
           {unit?.Class.map((classes) => {
             const signed = classes.Attendance.some(
-              (att) => att.attendance_status
+              (att) =>
+                att.attendance_status &&
+                att.attendance_student_id === user?.Student?.student_id
             );
 
             return (
@@ -141,9 +144,19 @@ export default function UnitPage({ data }: Props) {
                       ) : isWithinRegion ? (
                         <span className="w-full flex items-center justify-center">
                           {!isAdmin ? (
-                            <QRCodeGenerator
-                              url={`${process.env.NEXT_PUBLIC_URL}units/${unit.unit_id}?student_id=${user?.Student?.student_id}&class_id=${classes.class_id}&unit_id=${unit.unit_id}`}
-                            />
+                            <div className="flex flex-col">
+                              <QRCodeGenerator
+                                url={`${process.env.NEXT_PUBLIC_URL}home/units/${unit.unit_id}?student_id=${user?.Student?.student_id}&class_id=${classes.class_id}&unit_id=${unit.unit_id}`}
+                              />
+                              <Link
+                                rel="noopener noreferrer"
+                                target="_blank"
+                                href={`${process.env.NEXT_PUBLIC_URL}home/units/${unit.unit_id}?student_id=${user?.Student?.student_id}&class_id=${classes.class_id}&unit_id=${unit.unit_id}`}
+                                className="text-blue-500 hover:underline"
+                              >
+                                link generated after scan(for dev)..follow
+                              </Link>
+                            </div>
                           ) : (
                             "admins cannot scan qr"
                           )}

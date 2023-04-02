@@ -25,6 +25,9 @@ import UnitComp from "../../components/classes/unit";
 import { LoggedInUser } from "./users";
 import Modal from "../../components/utils/Modal";
 import DeleteUnit from "../../components/classes/delete-unit";
+import useDebounce from "../../components/hooks/debounce";
+import axios from "axios";
+import Loader from "../../components/utils/loader";
 
 type Props = {
   data: Data;
@@ -38,7 +41,31 @@ export default function Class({ data }: Props) {
   const [clientUnits, setClientUnits] = useState<Unit[]>([]);
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const isAdmin = user?.user_role === "admin";
+
+  const debouncedSearch = useDebounce(query, 500);
+  useEffect(() => {
+    if (debouncedSearch) {
+      setLoading(true);
+      axios
+        .get(`/api/classes/search-unit?query=${query}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setLoading(false);
+          setClientUnits(response.data.data);
+          console.log(response.data.data);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+        });
+    }
+  }, [debouncedSearch, query, token]);
 
   useEffect(() => {
     setClientUnits(units);
@@ -57,7 +84,10 @@ export default function Class({ data }: Props) {
           <div className=" relative w-full col-span-4 md:col-span-9 bg-white shadow rounded-md">
             <input
               className="w-full h-full py-2 px-10 rounded-md outline-none disabled:bg-slate-100  border  border-slate-200 focus:border-green-600 focus:ring-2 focus:ring-green-300 ring-offset-1 hover:border-green-500 "
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setLoading(true);
+              }}
               value={query}
               placeholder="Search "
             />
@@ -80,18 +110,39 @@ export default function Class({ data }: Props) {
           )}
         </div>
         <div className="w-full grid grid-cols-1 md:grid-cols-3 mt-2 gap-4 py-4">
-          {clientUnits.map((unit) => {
-            return (
-              <UnitComp
-                key={unit.unit_id}
-                unit={unit}
-                user={user}
-                setDeleteUnit={setOpenDeleteModal}
-                setEditUnit={setOpenEditSidePanel}
-                setSelectedUnit={setSelectedUnit}
-              />
-            );
-          })}
+          {query.length <= 0 ? (
+            clientUnits.map((unit) => {
+              return (
+                <UnitComp
+                  key={unit.unit_id}
+                  unit={unit}
+                  user={user}
+                  setDeleteUnit={setOpenDeleteModal}
+                  setEditUnit={setOpenEditSidePanel}
+                  setSelectedUnit={setSelectedUnit}
+                />
+              );
+            })
+          ) : loading ? (
+            <div className="col-span-3 flex items-center justify-center">
+              <p className="">
+                <Loader />
+              </p>
+            </div>
+          ) : (
+            clientUnits.map((unit) => {
+              return (
+                <UnitComp
+                  key={unit.unit_id}
+                  unit={unit}
+                  user={user}
+                  setDeleteUnit={setOpenDeleteModal}
+                  setEditUnit={setOpenEditSidePanel}
+                  setSelectedUnit={setSelectedUnit}
+                />
+              );
+            })
+          )}
         </div>
       </div>
 

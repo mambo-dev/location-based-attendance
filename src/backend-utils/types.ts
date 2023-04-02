@@ -17,8 +17,8 @@ export type Report = {
   unit_name: string;
   class_id: number;
   class_name: string;
-  class_start: Date;
-  class_end: Date;
+  class_start: string;
+  class_end: string;
   student_id: number;
   student_name: string;
   student_attended: boolean;
