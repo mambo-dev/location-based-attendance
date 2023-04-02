@@ -51,7 +51,7 @@ export default function Map({
   );
 }
 
-const radius = 15;
+const radius = 17;
 function MapComponent({
   lat,
   lng,

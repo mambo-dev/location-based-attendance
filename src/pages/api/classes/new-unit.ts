@@ -168,7 +168,11 @@ export default async function handler(
     for (let i = 0; i < total_classes; i++) {
       const classStartTime = classDates[i];
       const classEndTime = addMinutes(classStartTime, classDuration);
-      const isExpired = classEndTime < new Date(classStartTime);
+
+      const isOngoing = isWithinInterval(new Date(classStartTime), {
+        start: new Date(classStartTime),
+        end: new Date(classEndTime),
+      });
       const isUpComing = new Date(classStartTime) > new Date(`${start_time}`);
       await prisma.class.create({
         data: {
@@ -179,11 +183,11 @@ export default async function handler(
               unit_id: newUnit.unit_id,
             },
           },
-          class_type: isExpired
-            ? "expired"
-            : isUpComing
+          class_type: isUpComing
             ? "upcoming"
-            : "ongoing",
+            : isOngoing
+            ? "ongoing"
+            : "expired",
           class_name: `CLASS-${formatNumber(i)}`,
           class_location_lat: Number(latitude),
           class_location_lng: Number(longitude),

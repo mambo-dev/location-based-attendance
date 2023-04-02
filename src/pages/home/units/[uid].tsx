@@ -84,7 +84,9 @@ export default function UnitPage({ data }: Props) {
           className="absolute right-0 top-0 bottom-0  w-50% md:w-[30%] divide-y divide-gray-200  border border-slate-300 bg-white shadow-lg"
         >
           {unit?.Class.map((classes) => {
-            console.log(classes.Attendance);
+            const signed = classes.Attendance.some(
+              (att) => att.attendance_status
+            );
 
             return (
               <DisclosureComp
@@ -93,7 +95,13 @@ export default function UnitPage({ data }: Props) {
                   <div className="w-full flex items-center justify-start gap-x-4 py-2">
                     <div className="flex-1 flex items-center gap-x-4">
                       <span>{classes.class_name}</span>
-                      <span>{true ? "signed" : "not signed"}</span>
+                      <span>
+                        {signed
+                          ? "signed"
+                          : classes.class_type === "upcoming"
+                          ? ""
+                          : "not signed"}
+                      </span>
 
                       <span>
                         {classes.class_type === "expired" ? (
